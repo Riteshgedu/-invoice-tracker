@@ -5,474 +5,427 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Invoice Tracker — Finance</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  :root {
-    --bg: #F0F2F5;
-    --surface: #FFFFFF;
-    --surface2: #F7F8FA;
-    --border: #E2E5EA;
-    --text: #1A1D23;
-    --text2: #6B7280;
-    --text3: #9CA3AF;
-    --blue: #2563EB;
-    --blue-light: #EFF6FF;
-    --high: #DC2626;
-    --high-bg: #FEF2F2;
-    --med: #D97706;
-    --med-bg: #FFFBEB;
-    --low: #16A34A;
-    --low-bg: #F0FDF4;
-    --stage1: #7C3AED;
-    --stage2: #2563EB;
-    --stage3: #D97706;
-    --stage4: #16A34A;
-    --radius: 8px;
-    --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
-    --shadow-lg: 0 4px 16px rgba(0,0,0,0.10);
-  }
+:root {
+--bg: #F0F2F5;
+--surface: #FFFFFF;
+--surface2: #F7F8FA;
+--border: #E2E5EA;
+--text: #1A1D23;
+--text2: #6B7280;
+--text3: #9CA3AF;
+--blue: #2563EB;
+--blue-light: #EFF6FF;
+--high: #DC2626;
+--high-bg: #FEF2F2;
+--med: #D97706;
+--med-bg: #FFFBEB;
+--low: #16A34A;
+--low-bg: #F0FDF4;
+--stage1: #7C3AED;
+--stage2: #2563EB;
+--stage3: #D97706;
+--stage4: #16A34A;
+--radius: 8px;
+--shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
+--shadow-lg: 0 4px 16px rgba(0,0,0,0.10);
+}
 
-  body {
-    font-family: 'Inter', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    font-size: 14px;
-    line-height: 1.5;
-  }
+body {
+font-family: 'Inter', sans-serif;
+background: var(--bg);
+color: var(--text);
+min-height: 100vh;
+font-size: 14px;
+line-height: 1.5;
+}
 
-  /* ── HEADER ── */
-  header {
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-    padding: 0 24px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    height: 56px;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-  }
-  .logo { font-weight: 700; font-size: 15px; letter-spacing: -0.3px; color: var(--text); }
-  .logo span { color: var(--blue); }
-  .header-right { display: flex; align-items: center; gap: 12px; }
-  #api-status { font-size: 12px; color: var(--text2); display: flex; align-items: center; gap: 6px; }
-  #api-status .dot { width: 7px; height: 7px; border-radius: 50%; background: #ccc; }
-  #api-status.ok .dot { background: var(--low); }
-  #api-status.err .dot { background: var(--high); }
-  .btn { padding: 7px 14px; border-radius: var(--radius); font-size: 13px; font-weight: 500; cursor: pointer; border: none; transition: all 0.15s; font-family: inherit; }
-  .btn-primary { background: var(--blue); color: #fff; }
-  .btn-primary:hover { background: #1d4ed8; }
-  .btn-ghost { background: transparent; color: var(--text2); border: 1px solid var(--border); }
-  .btn-ghost:hover { background: var(--bg); color: var(--text); }
-  .btn-sm { padding: 4px 10px; font-size: 12px; }
+/* ── HEADER ── */
+header {
+background: var(--surface);
+border-bottom: 1px solid var(--border);
+padding: 0 24px;
+display: flex;
+align-items: center;
+justify-content: space-between;
+height: 56px;
+position: sticky;
+top: 0;
+z-index: 100;
+}
+.logo { font-weight: 700; font-size: 15px; letter-spacing: -0.3px; color: var(--text); }
+.logo span { color: var(--blue); }
+.header-right { display: flex; align-items: center; gap: 12px; }
+.btn { padding: 7px 14px; border-radius: var(--radius); font-size: 13px; font-weight: 500; cursor: pointer; border: none; transition: all 0.15s; font-family: inherit; }
+.btn-primary { background: var(--blue); color: #fff; }
+.btn-primary:hover { background: #1d4ed8; }
+.btn-ghost { background: transparent; color: var(--text2); border: 1px solid var(--border); }
+.btn-ghost:hover { background: var(--bg); color: var(--text); }
+.btn-sm { padding: 4px 10px; font-size: 12px; }
 
-  /* ── LAYOUT ── */
-  main { max-width: 1280px; margin: 0 auto; padding: 24px; }
+/* ── LAYOUT ── */
+main { max-width: 1280px; margin: 0 auto; padding: 24px; }
 
-  /* ── API KEY BANNER ── */
-  #key-banner {
-    background: #EFF6FF;
-    border: 1px solid #BFDBFE;
-    border-radius: var(--radius);
-    padding: 14px 18px;
-    margin-bottom: 20px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    flex-wrap: wrap;
-  }
-  #key-banner p { font-size: 13px; color: #1e40af; flex: 1; min-width: 200px; }
-  #key-banner a { color: var(--blue); text-decoration: underline; }
-  .key-input-row { display: flex; gap: 8px; }
-  .key-input-row input { padding: 6px 10px; border: 1px solid #BFDBFE; border-radius: 6px; font-size: 13px; width: 280px; font-family: 'JetBrains Mono', monospace; color: var(--text); }
-  #key-banner.hidden { display: none; }
+/* ── STATS ROW ── */
+.stats-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 20px; }
+.stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; box-shadow: var(--shadow); }
+.stat-card .label { font-size: 11px; color: var(--text2); font-weight: 500; margin-bottom: 4px; }
+.stat-card .value { font-size: 22px; font-weight: 700; color: var(--text); font-family: 'JetBrains Mono', monospace; }
+.stat-card .sub { font-size: 11px; color: var(--text3); margin-top: 2px; }
+.stat-card.s1 .value { color: var(--stage1); }
+.stat-card.s2 .value { color: var(--stage2); }
+.stat-card.s3 .value { color: var(--stage3); }
+.stat-card.s4 .value { color: var(--stage4); }
 
-  /* ── STATS ROW ── */
-  .stats-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 20px; }
-  .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; box-shadow: var(--shadow); }
-  .stat-card .label { font-size: 11px; color: var(--text2); font-weight: 500; margin-bottom: 4px; }
-  .stat-card .value { font-size: 22px; font-weight: 700; color: var(--text); font-family: 'JetBrains Mono', monospace; }
-  .stat-card .sub { font-size: 11px; color: var(--text3); margin-top: 2px; }
-  .stat-card.s1 .value { color: var(--stage1); }
-  .stat-card.s2 .value { color: var(--stage2); }
-  .stat-card.s3 .value { color: var(--stage3); }
-  .stat-card.s4 .value { color: var(--stage4); }
+/* ── TOOLBAR ── */
+.toolbar { display: flex; gap: 10px; margin-bottom: 16px; align-items: center; flex-wrap: wrap; }
+.toolbar input[type=text] { padding: 8px 12px; border: 1px solid var(--border); border-radius: var(--radius); font-size: 13px; font-family: inherit; background: var(--surface); color: var(--text); width: 220px; }
+.toolbar input:focus { outline: none; border-color: var(--blue); }
+.filter-group { display: flex; gap: 6px; flex-wrap: wrap; }
+.filter-btn { padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 500; cursor: pointer; border: 1px solid var(--border); background: var(--surface); color: var(--text2); transition: all 0.15s; }
+.filter-btn.active { border-color: var(--blue); background: var(--blue-light); color: var(--blue); }
+.toolbar-right { margin-left: auto; display: flex; gap: 8px; }
 
-  /* ── TOOLBAR ── */
-  .toolbar { display: flex; gap: 10px; margin-bottom: 16px; align-items: center; flex-wrap: wrap; }
-  .toolbar input[type=text] { padding: 8px 12px; border: 1px solid var(--border); border-radius: var(--radius); font-size: 13px; font-family: inherit; background: var(--surface); color: var(--text); width: 220px; }
-  .toolbar input:focus { outline: none; border-color: var(--blue); }
-  .filter-group { display: flex; gap: 6px; flex-wrap: wrap; }
-  .filter-btn { padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 500; cursor: pointer; border: 1px solid var(--border); background: var(--surface); color: var(--text2); transition: all 0.15s; }
-  .filter-btn.active { border-color: var(--blue); background: var(--blue-light); color: var(--blue); }
-  .toolbar-right { margin-left: auto; display: flex; gap: 8px; }
+/* ── TABLE ── */
+.table-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
+table { width: 100%; border-collapse: collapse; }
+thead th { background: var(--surface2); padding: 10px 14px; text-align: left; font-size: 11px; font-weight: 600; color: var(--text2); border-bottom: 1px solid var(--border); white-space: nowrap; letter-spacing: 0.3px; }
+tbody tr { border-bottom: 1px solid var(--border); transition: background 0.1s; }
+tbody tr:last-child { border-bottom: none; }
+tbody tr:hover { background: var(--surface2); }
+tbody td { padding: 11px 14px; font-size: 13px; vertical-align: middle; }
+.track-no { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 500; color: var(--blue); }
+.vendor-name { font-weight: 500; color: var(--text); }
+.amount-cell { font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 600; }
+.empty-state { text-align: center; padding: 60px 20px; color: var(--text2); }
+.empty-state .icon { font-size: 40px; margin-bottom: 12px; }
+.empty-state p { font-size: 14px; }
 
-  /* ── TABLE ── */
-  .table-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
-  table { width: 100%; border-collapse: collapse; }
-  thead th { background: var(--surface2); padding: 10px 14px; text-align: left; font-size: 11px; font-weight: 600; color: var(--text2); border-bottom: 1px solid var(--border); white-space: nowrap; letter-spacing: 0.3px; }
-  tbody tr { border-bottom: 1px solid var(--border); transition: background 0.1s; }
-  tbody tr:last-child { border-bottom: none; }
-  tbody tr:hover { background: var(--surface2); }
-  tbody td { padding: 11px 14px; font-size: 13px; vertical-align: middle; }
-  .track-no { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 500; color: var(--blue); }
-  .vendor-name { font-weight: 500; color: var(--text); }
-  .amount-cell { font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 600; }
-  .empty-state { text-align: center; padding: 60px 20px; color: var(--text2); }
-  .empty-state .icon { font-size: 40px; margin-bottom: 12px; }
-  .empty-state p { font-size: 14px; }
+/* ── BADGES ── */
+.badge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 20px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+.badge-high { background: var(--high-bg); color: var(--high); }
+.badge-medium { background: var(--med-bg); color: var(--med); }
+.badge-low { background: var(--low-bg); color: var(--low); }
+.stage-badge { padding: 3px 9px; border-radius: 4px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+.stage-1 { background: #F3EFFB; color: var(--stage1); }
+.stage-2 { background: var(--blue-light); color: var(--stage2); }
+.stage-3 { background: var(--med-bg); color: var(--stage3); }
+.stage-4 { background: var(--low-bg); color: var(--stage4); }
+.sla-ok { color: var(--low); font-size: 11px; }
+.sla-warn { color: var(--med); font-size: 11px; font-weight: 600; }
+.sla-over { color: var(--high); font-size: 11px; font-weight: 700; }
 
-  /* ── BADGES ── */
-  .badge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 20px; font-size: 11px; font-weight: 600; white-space: nowrap; }
-  .badge-high { background: var(--high-bg); color: var(--high); }
-  .badge-medium { background: var(--med-bg); color: var(--med); }
-  .badge-low { background: var(--low-bg); color: var(--low); }
-  .stage-badge { padding: 3px 9px; border-radius: 4px; font-size: 11px; font-weight: 600; white-space: nowrap; }
-  .stage-1 { background: #F3EFFB; color: var(--stage1); }
-  .stage-2 { background: var(--blue-light); color: var(--stage2); }
-  .stage-3 { background: var(--med-bg); color: var(--stage3); }
-  .stage-4 { background: var(--low-bg); color: var(--stage4); }
-  .sla-ok { color: var(--low); font-size: 11px; }
-  .sla-warn { color: var(--med); font-size: 11px; font-weight: 600; }
-  .sla-over { color: var(--high); font-size: 11px; font-weight: 700; }
+/* ── ACTION DOTS ── */
+.action-cell { display: flex; gap: 6px; }
 
-  /* ── ACTION DOTS ── */
-  .action-cell { display: flex; gap: 6px; }
+/* ── MODAL ── */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 200; display: flex; align-items: center; justify-content: center; padding: 20px; }
+.modal-overlay.hidden { display: none; }
+.modal { background: var(--surface); border-radius: 12px; width: 100%; max-width: 680px; max-height: 90vh; overflow-y: auto; box-shadow: var(--shadow-lg); }
+.modal-header { padding: 20px 24px 0; display: flex; justify-content: space-between; align-items: flex-start; }
+.modal-header h2 { font-size: 17px; font-weight: 700; }
+.modal-header .close { background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text2); line-height: 1; padding: 2px 6px; border-radius: 4px; }
+.modal-header .close:hover { background: var(--bg); }
+.modal-body { padding: 20px 24px 24px; }
 
-  /* ── MODAL ── */
-  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 200; display: flex; align-items: center; justify-content: center; padding: 20px; }
-  .modal-overlay.hidden { display: none; }
-  .modal { background: var(--surface); border-radius: 12px; width: 100%; max-width: 680px; max-height: 90vh; overflow-y: auto; box-shadow: var(--shadow-lg); }
-  .modal-header { padding: 20px 24px 0; display: flex; justify-content: space-between; align-items: flex-start; }
-  .modal-header h2 { font-size: 17px; font-weight: 700; }
-  .modal-header .close { background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text2); line-height: 1; padding: 2px 6px; border-radius: 4px; }
-  .modal-header .close:hover { background: var(--bg); }
-  .modal-body { padding: 20px 24px 24px; }
+/* ── UPLOAD ZONE ── */
+.upload-zone { border: 2px dashed var(--border); border-radius: var(--radius); padding: 36px 20px; text-align: center; cursor: pointer; transition: all 0.2s; background: var(--surface2); }
+.upload-zone:hover, .upload-zone.drag { border-color: var(--blue); background: var(--blue-light); }
+.upload-zone .upload-icon { font-size: 32px; margin-bottom: 10px; }
+.upload-zone p { color: var(--text2); font-size: 13px; }
+.upload-zone strong { color: var(--blue); }
+#file-input { display: none; }
 
-  /* ── UPLOAD ZONE ── */
-  .upload-zone { border: 2px dashed var(--border); border-radius: var(--radius); padding: 36px 20px; text-align: center; cursor: pointer; transition: all 0.2s; background: var(--surface2); }
-  .upload-zone:hover, .upload-zone.drag { border-color: var(--blue); background: var(--blue-light); }
-  .upload-zone .upload-icon { font-size: 32px; margin-bottom: 10px; }
-  .upload-zone p { color: var(--text2); font-size: 13px; }
-  .upload-zone strong { color: var(--blue); }
-  #file-input { display: none; }
+/* ── FORM GRID ── */
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 18px; }
+.form-group { display: flex; flex-direction: column; gap: 5px; }
+.form-group.full { grid-column: 1 / -1; }
+.form-group label { font-size: 12px; font-weight: 600; color: var(--text2); }
+.form-group input, .form-group select, .form-group textarea {
+padding: 8px 11px; border: 1px solid var(--border); border-radius: 6px;
+font-size: 13px; font-family: inherit; color: var(--text); background: var(--surface);
+transition: border-color 0.15s;
+}
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: var(--blue); }
+.form-group textarea { resize: vertical; min-height: 60px; }
+.form-group input[readonly] { background: var(--surface2); color: var(--text2); }
 
-  /* ── FORM GRID ── */
-  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 18px; }
-  .form-group { display: flex; flex-direction: column; gap: 5px; }
-  .form-group.full { grid-column: 1 / -1; }
-  .form-group label { font-size: 12px; font-weight: 600; color: var(--text2); }
-  .form-group input, .form-group select, .form-group textarea {
-    padding: 8px 11px; border: 1px solid var(--border); border-radius: 6px;
-    font-size: 13px; font-family: inherit; color: var(--text); background: var(--surface);
-    transition: border-color 0.15s;
-  }
-  .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: var(--blue); }
-  .form-group textarea { resize: vertical; min-height: 60px; }
-  .form-group input[readonly] { background: var(--surface2); color: var(--text2); }
+/* ── PRIORITY SELECTOR ── */
+.priority-selector { display: flex; gap: 8px; }
+.pri-btn { flex: 1; padding: 7px; border-radius: 6px; border: 1.5px solid var(--border); cursor: pointer; font-size: 12px; font-weight: 600; text-align: center; transition: all 0.15s; background: var(--surface); }
+.pri-btn.high.sel { border-color: var(--high); background: var(--high-bg); color: var(--high); }
+.pri-btn.medium.sel { border-color: var(--med); background: var(--med-bg); color: var(--med); }
+.pri-btn.low.sel { border-color: var(--low); background: var(--low-bg); color: var(--low); }
+.pri-btn:not(.sel) { color: var(--text2); }
 
-  /* ── PRIORITY SELECTOR ── */
-  .priority-selector { display: flex; gap: 8px; }
-  .pri-btn { flex: 1; padding: 7px; border-radius: 6px; border: 1.5px solid var(--border); cursor: pointer; font-size: 12px; font-weight: 600; text-align: center; transition: all 0.15s; background: var(--surface); }
-  .pri-btn.high.sel { border-color: var(--high); background: var(--high-bg); color: var(--high); }
-  .pri-btn.medium.sel { border-color: var(--med); background: var(--med-bg); color: var(--med); }
-  .pri-btn.low.sel { border-color: var(--low); background: var(--low-bg); color: var(--low); }
-  .pri-btn:not(.sel) { color: var(--text2); }
+/* ── DETAIL MODAL ── */
+.detail-section { margin-bottom: 20px; }
+.detail-section h3 { font-size: 12px; font-weight: 600; color: var(--text2); margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+.detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.detail-item label { font-size: 11px; color: var(--text3); display: block; margin-bottom: 2px; }
+.detail-item .val { font-size: 13px; font-weight: 500; color: var(--text); }
+.detail-item .val.mono { font-family: 'JetBrains Mono', monospace; }
 
-  /* ── EXTRACTING STATE ── */
-  .extracting { display: flex; align-items: center; gap: 10px; padding: 14px; background: var(--blue-light); border-radius: var(--radius); font-size: 13px; color: var(--blue); margin-top: 12px; }
-  .spinner { width: 16px; height: 16px; border: 2px solid #BFDBFE; border-top-color: var(--blue); border-radius: 50%; animation: spin 0.7s linear infinite; flex-shrink: 0; }
-  @keyframes spin { to { transform: rotate(360deg); } }
+/* ── STAGE TIMELINE ── */
+.stage-timeline { display: flex; gap: 0; margin: 16px 0; }
+.stage-step { flex: 1; position: relative; }
+.stage-step:not(:last-child)::after { content: ''; position: absolute; top: 14px; right: -1px; width: calc(100%); height: 2px; background: var(--border); z-index: 0; }
+.stage-dot { width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--border); background: var(--surface); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: var(--text2); position: relative; z-index: 1; margin-bottom: 6px; }
+.stage-step.done .stage-dot { background: var(--low); border-color: var(--low); color: #fff; }
+.stage-step.active .stage-dot { background: var(--blue); border-color: var(--blue); color: #fff; }
+.stage-step .stage-label { font-size: 10px; color: var(--text2); line-height: 1.3; max-width: 80px; }
+.stage-step.active .stage-label { color: var(--blue); font-weight: 600; }
+.stage-step.done .stage-label { color: var(--low); }
 
-  /* ── DETAIL MODAL ── */
-  .detail-section { margin-bottom: 20px; }
-  .detail-section h3 { font-size: 12px; font-weight: 600; color: var(--text2); margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
-  .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .detail-item label { font-size: 11px; color: var(--text3); display: block; margin-bottom: 2px; }
-  .detail-item .val { font-size: 13px; font-weight: 500; color: var(--text); }
-  .detail-item .val.mono { font-family: 'JetBrains Mono', monospace; }
+/* ── TOAST ── */
+#toast { position: fixed; bottom: 24px; right: 24px; background: var(--text); color: #fff; padding: 12px 18px; border-radius: var(--radius); font-size: 13px; font-weight: 500; z-index: 999; box-shadow: var(--shadow-lg); transform: translateY(80px); opacity: 0; transition: all 0.25s; pointer-events: none; }
+#toast.show { transform: translateY(0); opacity: 1; }
+#toast.success { background: var(--low); }
+#toast.error { background: var(--high); }
 
-  /* ── STAGE TIMELINE ── */
-  .stage-timeline { display: flex; gap: 0; margin: 16px 0; }
-  .stage-step { flex: 1; position: relative; }
-  .stage-step:not(:last-child)::after { content: ''; position: absolute; top: 14px; right: -1px; width: calc(100%); height: 2px; background: var(--border); z-index: 0; }
-  .stage-dot { width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--border); background: var(--surface); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: var(--text2); position: relative; z-index: 1; margin-bottom: 6px; }
-  .stage-step.done .stage-dot { background: var(--low); border-color: var(--low); color: #fff; }
-  .stage-step.active .stage-dot { background: var(--blue); border-color: var(--blue); color: #fff; }
-  .stage-step .stage-label { font-size: 10px; color: var(--text2); line-height: 1.3; max-width: 80px; }
-  .stage-step.active .stage-label { color: var(--blue); font-weight: 600; }
-  .stage-step.done .stage-label { color: var(--low); }
+/* ── DAILY STATUS PANEL ── */
+.status-panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 20px; margin-bottom: 20px; box-shadow: var(--shadow); }
+.status-panel h3 { font-size: 13px; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+.status-panel h3 .date-tag { font-size: 11px; font-weight: 400; color: var(--text2); background: var(--bg); padding: 2px 8px; border-radius: 20px; }
+.status-table { width: 100%; border-collapse: collapse; }
+.status-table th { font-size: 11px; color: var(--text2); font-weight: 600; text-align: left; padding: 4px 8px; }
+.status-table td { font-size: 12px; padding: 5px 8px; border-top: 1px solid var(--border); }
 
-  /* ── TOAST ── */
-  #toast { position: fixed; bottom: 24px; right: 24px; background: var(--text); color: #fff; padding: 12px 18px; border-radius: var(--radius); font-size: 13px; font-weight: 500; z-index: 999; box-shadow: var(--shadow-lg); transform: translateY(80px); opacity: 0; transition: all 0.25s; pointer-events: none; }
-  #toast.show { transform: translateY(0); opacity: 1; }
-  #toast.success { background: var(--low); }
-  #toast.error { background: var(--high); }
-
-  /* ── DAILY STATUS PANEL ── */
-  .status-panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 20px; margin-bottom: 20px; box-shadow: var(--shadow); }
-  .status-panel h3 { font-size: 13px; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
-  .status-panel h3 .date-tag { font-size: 11px; font-weight: 400; color: var(--text2); background: var(--bg); padding: 2px 8px; border-radius: 20px; }
-  .status-table { width: 100%; border-collapse: collapse; }
-  .status-table th { font-size: 11px; color: var(--text2); font-weight: 600; text-align: left; padding: 4px 8px; }
-  .status-table td { font-size: 12px; padding: 5px 8px; border-top: 1px solid var(--border); }
-
-  @media (max-width: 768px) {
-    .stats-row { grid-template-columns: repeat(2, 1fr); }
-    .form-grid { grid-template-columns: 1fr; }
-    .detail-grid { grid-template-columns: 1fr; }
-    tbody td:nth-child(4), tbody td:nth-child(5) { display: none; }
-    header { padding: 0 16px; }
-    main { padding: 16px; }
-  }
+@media (max-width: 768px) {
+.stats-row { grid-template-columns: repeat(2, 1fr); }
+.form-grid { grid-template-columns: 1fr; }
+.detail-grid { grid-template-columns: 1fr; }
+tbody td:nth-child(4), tbody td:nth-child(5) { display: none; }
+header { padding: 0 16px; }
+main { padding: 16px; }
+}
 </style>
 </head>
 <body>
 
 <header>
-  <div class="logo">Invoice<span>Tracker</span></div>
-  <div class="header-right">
-    <div id="api-status"><span class="dot"></span><span id="api-status-text">API not configured</span></div>
-    <button class="btn btn-ghost btn-sm" onclick="openSettings()">⚙ Settings</button>
-    <button class="btn btn-primary" onclick="openUpload()">+ New Invoice</button>
-  </div>
+<div class="logo">Invoice<span>Tracker</span></div>
+<div class="header-right">
+<button class="btn btn-ghost btn-sm" onclick="openSettings()">⚙ Settings</button>
+<button class="btn btn-primary" onclick="openUpload()">+ New Invoice</button>
+</div>
 </header>
 
 <main>
-  <!-- API Key Banner -->
-  <div id="key-banner">
-    <p>Enter your <strong>Gemini API key</strong> to enable PDF extraction. Get a free key at <a href="https://aistudio.google.com" target="_blank">aistudio.google.com</a></p>
-    <div class="key-input-row">
-      <input type="password" id="api-key-input" placeholder="AIza...">
-      <button class="btn btn-primary btn-sm" onclick="saveApiKey()">Save Key</button>
-    </div>
-  </div>
+<!-- Daily Status Panel -->
+<div class="status-panel">
+<h3>Daily Status Snapshot <span class="date-tag" id="today-date"></span></h3>
+<table class="status-table">
+<thead>
+<tr>
+<th>Stage</th>
+<th>Count</th>
+<th>🔴 High</th>
+<th>🟡 Medium</th>
+<th>🟢 Low</th>
+<th>Overdue SLA</th>
+</tr>
+</thead>
+<tbody id="status-tbody"></tbody>
+</table>
+</div>
 
-  <!-- Daily Status Panel -->
-  <div class="status-panel">
-    <h3>Daily Status Snapshot <span class="date-tag" id="today-date"></span></h3>
-    <table class="status-table">
-      <thead>
-        <tr>
-          <th>Stage</th>
-          <th>Count</th>
-          <th>🔴 High</th>
-          <th>🟡 Medium</th>
-          <th>🟢 Low</th>
-          <th>Overdue SLA</th>
-        </tr>
-      </thead>
-      <tbody id="status-tbody"></tbody>
-    </table>
-  </div>
+<!-- Stats -->
+<div class="stats-row">
+<div class="stat-card">
+<div class="label">Total Invoices</div>
+<div class="value" id="stat-total">0</div>
+<div class="sub">all time</div>
+</div>
+<div class="stat-card s1">
+<div class="label">Pending Unit4 Upload</div>
+<div class="value" id="stat-s1">0</div>
+<div class="sub">stage 1</div>
+</div>
+<div class="stat-card s2">
+<div class="label">Pending Approval</div>
+<div class="value" id="stat-s2">0</div>
+<div class="sub">stage 2</div>
+</div>
+<div class="stat-card s3">
+<div class="label">Pending Payment</div>
+<div class="value" id="stat-s3">0</div>
+<div class="sub">stage 3</div>
+</div>
+<div class="stat-card s4">
+<div class="label">Fully Processed</div>
+<div class="value" id="stat-s4">0</div>
+<div class="sub">stage 4</div>
+</div>
+</div>
 
-  <!-- Stats -->
-  <div class="stats-row">
-    <div class="stat-card">
-      <div class="label">Total Invoices</div>
-      <div class="value" id="stat-total">0</div>
-      <div class="sub">all time</div>
-    </div>
-    <div class="stat-card s1">
-      <div class="label">Pending Unit4 Upload</div>
-      <div class="value" id="stat-s1">0</div>
-      <div class="sub">stage 1</div>
-    </div>
-    <div class="stat-card s2">
-      <div class="label">Pending Approval</div>
-      <div class="value" id="stat-s2">0</div>
-      <div class="sub">stage 2</div>
-    </div>
-    <div class="stat-card s3">
-      <div class="label">Pending Payment</div>
-      <div class="value" id="stat-s3">0</div>
-      <div class="sub">stage 3</div>
-    </div>
-    <div class="stat-card s4">
-      <div class="label">Fully Processed</div>
-      <div class="value" id="stat-s4">0</div>
-      <div class="sub">stage 4</div>
-    </div>
-  </div>
+<!-- Toolbar -->
+<div class="toolbar">
+<input type="text" id="search-box" placeholder="Search vendor, tracking no..." oninput="renderTable()">
+<div class="filter-group">
+<button class="filter-btn active" data-filter="all" onclick="setFilter('all', this)">All</button>
+<button class="filter-btn" data-filter="1" onclick="setFilter('1', this)">Stage 1</button>
+<button class="filter-btn" data-filter="2" onclick="setFilter('2', this)">Stage 2</button>
+<button class="filter-btn" data-filter="3" onclick="setFilter('3', this)">Stage 3</button>
+<button class="filter-btn" data-filter="4" onclick="setFilter('4', this)">Stage 4</button>
+</div>
+<div class="filter-group">
+<button class="filter-btn" data-filter-pri="high" onclick="setPriFilter('high', this)">🔴 High</button>
+<button class="filter-btn" data-filter-pri="medium" onclick="setPriFilter('medium', this)">🟡 Medium</button>
+<button class="filter-btn" data-filter-pri="low" onclick="setPriFilter('low', this)">🟢 Low</button>
+</div>
+<div class="toolbar-right">
+<button class="btn btn-ghost btn-sm" onclick="exportCSV()">↓ Export CSV</button>
+</div>
+</div>
 
-  <!-- Toolbar -->
-  <div class="toolbar">
-    <input type="text" id="search-box" placeholder="Search vendor, tracking no..." oninput="renderTable()">
-    <div class="filter-group">
-      <button class="filter-btn active" data-filter="all" onclick="setFilter('all', this)">All</button>
-      <button class="filter-btn" data-filter="1" onclick="setFilter('1', this)">Stage 1</button>
-      <button class="filter-btn" data-filter="2" onclick="setFilter('2', this)">Stage 2</button>
-      <button class="filter-btn" data-filter="3" onclick="setFilter('3', this)">Stage 3</button>
-      <button class="filter-btn" data-filter="4" onclick="setFilter('4', this)">Stage 4</button>
-    </div>
-    <div class="filter-group">
-      <button class="filter-btn" data-filter-pri="high" onclick="setPriFilter('high', this)">🔴 High</button>
-      <button class="filter-btn" data-filter-pri="medium" onclick="setPriFilter('medium', this)">🟡 Medium</button>
-      <button class="filter-btn" data-filter-pri="low" onclick="setPriFilter('low', this)">🟢 Low</button>
-    </div>
-    <div class="toolbar-right">
-      <button class="btn btn-ghost btn-sm" onclick="exportCSV()">↓ Export CSV</button>
-    </div>
-  </div>
-
-  <!-- Table -->
-  <div class="table-wrap">
-    <table>
-      <thead>
-        <tr>
-          <th>Tracking #</th>
-          <th>Vendor</th>
-          <th>Date</th>
-          <th>Amount</th>
-          <th>GST</th>
-          <th>Purpose</th>
-          <th>Priority</th>
-          <th>Stage</th>
-          <th>SLA</th>
-          <th>Initiator</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody id="invoice-tbody">
-        <tr><td colspan="11"><div class="empty-state"><div class="icon">📂</div><p>No invoices yet. Upload your first invoice to get started.</p></div></td></tr>
-      </tbody>
-    </table>
-  </div>
+<!-- Table -->
+<div class="table-wrap">
+<table>
+<thead>
+<tr>
+<th>Tracking #</th>
+<th>Vendor</th>
+<th>Date</th>
+<th>Amount</th>
+<th>GST</th>
+<th>Purpose</th>
+<th>Priority</th>
+<th>Stage</th>
+<th>SLA</th>
+<th>Initiator</th>
+<th>Actions</th>
+</tr>
+</thead>
+<tbody id="invoice-tbody">
+<tr><td colspan="11"><div class="empty-state"><div class="icon">📂</div><p>No invoices yet. Upload your first invoice to get started.</p></div></td></tr>
+</tbody>
+</table>
+</div>
 </main>
 
 <!-- UPLOAD MODAL -->
 <div class="modal-overlay hidden" id="upload-modal">
-  <div class="modal">
-    <div class="modal-header">
-      <h2>Upload Invoice</h2>
-      <button class="close" onclick="closeUpload()">×</button>
-    </div>
-    <div class="modal-body">
-      <div class="upload-zone" id="upload-zone" onclick="document.getElementById('file-input').click()" ondrop="handleDrop(event)" ondragover="event.preventDefault(); this.classList.add('drag')" ondragleave="this.classList.remove('drag')">
-        <div class="upload-icon">📄</div>
-        <p><strong>Click to upload</strong> or drag & drop PDF invoice</p>
-        <p style="margin-top:4px; font-size:12px;">PDF files only</p>
-      </div>
-      <input type="file" id="file-input" accept="application/pdf" onchange="handleFile(this.files[0])">
+<div class="modal">
+<div class="modal-header">
+<h2>Upload Invoice</h2>
+<button class="close" onclick="closeUpload()">×</button>
+</div>
+<div class="modal-body">
+<div class="upload-zone" id="upload-zone" onclick="document.getElementById('file-input').click()" ondrop="handleDrop(event)" ondragover="event.preventDefault(); this.classList.add('drag')" ondragleave="this.classList.remove('drag')">
+<div class="upload-icon">📄</div>
+<p><strong>Click to attach</strong> or drag & drop PDF invoice</p>
+<p style="margin-top:4px; font-size:12px;">Attached for reference only — fill in the details below manually</p>
+</div>
+<input type="file" id="file-input" accept="application/pdf" onchange="handleFile(this.files[0])">
 
-      <div id="extracting" class="extracting hidden">
-        <div class="spinner"></div>
-        <span>Extracting invoice data with Gemini AI...</span>
-      </div>
-
-      <div id="form-area" class="hidden">
-        <div class="form-grid">
-          <div class="form-group">
-            <label>Invoice Date</label>
-            <input type="text" id="f-date" placeholder="DD/MM/YYYY">
-          </div>
-          <div class="form-group">
-            <label>Vendor Name</label>
-            <input type="text" id="f-vendor">
-          </div>
-          <div class="form-group">
-            <label>Vendor TRN</label>
-            <input type="text" id="f-trn" placeholder="Tax Registration Number">
-          </div>
-          <div class="form-group">
-            <label>Invoice Amount</label>
-            <input type="text" id="f-amount" oninput="autoSetPriority(this.value)">
-          </div>
-          <div class="form-group">
-            <label>GST / VAT Amount</label>
-            <input type="text" id="f-gst">
-          </div>
-          <div class="form-group">
-            <label>Currency</label>
-            <input type="text" id="f-currency" placeholder="INR / AED / USD">
-          </div>
-          <div class="form-group full">
-            <label>Purpose / Description</label>
-            <textarea id="f-purpose" rows="2"></textarea>
-          </div>
-          <div class="form-group full">
-            <label>Other Details (if any)</label>
-            <textarea id="f-other" rows="2" placeholder="PO number, notes, etc."></textarea>
-          </div>
-          <div class="form-group">
-            <label>Initiator Name</label>
-            <input type="text" id="f-initiator" placeholder="Your full name">
-          </div>
-          <div class="form-group">
-            <label>Department</label>
-            <input type="text" id="f-dept" placeholder="Finance / Operations / etc.">
-          </div>
-          <div class="form-group full">
-            <label>Priority <span style="font-weight:400;color:var(--text3)">(auto-set from amount, you can override)</span></label>
-            <div class="priority-selector">
-              <div class="pri-btn high" id="pri-high" onclick="selectPriority('high')">🔴 High</div>
-              <div class="pri-btn medium" id="pri-medium" onclick="selectPriority('medium')">🟡 Medium</div>
-              <div class="pri-btn low" id="pri-low" onclick="selectPriority('low')">🟢 Low</div>
-            </div>
-          </div>
-        </div>
-        <div style="margin-top:20px; display:flex; gap:10px; justify-content:flex-end;">
-          <button class="btn btn-ghost" onclick="closeUpload()">Cancel</button>
-          <button class="btn btn-primary" onclick="submitInvoice()">Submit Invoice</button>
-        </div>
-      </div>
-    </div>
-  </div>
+<div id="form-area">
+<div class="form-grid">
+<div class="form-group">
+<label>Invoice Date</label>
+<input type="text" id="f-date" placeholder="DD/MM/YYYY">
+</div>
+<div class="form-group">
+<label>Vendor Name</label>
+<input type="text" id="f-vendor">
+</div>
+<div class="form-group">
+<label>Vendor TRN</label>
+<input type="text" id="f-trn" placeholder="Tax Registration Number">
+</div>
+<div class="form-group">
+<label>Invoice Amount</label>
+<input type="text" id="f-amount" oninput="autoSetPriority(this.value)">
+</div>
+<div class="form-group">
+<label>GST / VAT Amount</label>
+<input type="text" id="f-gst">
+</div>
+<div class="form-group">
+<label>Currency</label>
+<input type="text" id="f-currency" placeholder="INR / AED / USD">
+</div>
+<div class="form-group full">
+<label>Purpose / Description</label>
+<textarea id="f-purpose" rows="2"></textarea>
+</div>
+<div class="form-group full">
+<label>Other Details (if any)</label>
+<textarea id="f-other" rows="2" placeholder="PO number, notes, etc."></textarea>
+</div>
+<div class="form-group">
+<label>Initiator Name</label>
+<input type="text" id="f-initiator" placeholder="Your full name">
+</div>
+<div class="form-group">
+<label>Department</label>
+<input type="text" id="f-dept" placeholder="Finance / Operations / etc.">
+</div>
+<div class="form-group full">
+<label>Priority <span style="font-weight:400;color:var(--text3)">(auto-set from amount, you can override)</span></label>
+<div class="priority-selector">
+<div class="pri-btn high" id="pri-high" onclick="selectPriority('high')">🔴 High</div>
+<div class="pri-btn medium" id="pri-medium" onclick="selectPriority('medium')">🟡 Medium</div>
+<div class="pri-btn low" id="pri-low" onclick="selectPriority('low')">🟢 Low</div>
+</div>
+</div>
+</div>
+<div style="margin-top:20px; display:flex; gap:10px; justify-content:flex-end;">
+<button class="btn btn-ghost" onclick="closeUpload()">Cancel</button>
+<button class="btn btn-primary" onclick="submitInvoice()">Submit Invoice</button>
+</div>
+</div>
+</div>
+</div>
 </div>
 
 <!-- DETAIL MODAL -->
 <div class="modal-overlay hidden" id="detail-modal">
-  <div class="modal">
-    <div class="modal-header">
-      <div>
-        <h2 id="dm-title">Invoice Details</h2>
-        <div style="margin-top:4px; font-size:12px; color:var(--text2)" id="dm-track"></div>
-      </div>
-      <button class="close" onclick="document.getElementById('detail-modal').classList.add('hidden')">×</button>
-    </div>
-    <div class="modal-body" id="detail-body"></div>
-  </div>
+<div class="modal">
+<div class="modal-header">
+<div>
+<h2 id="dm-title">Invoice Details</h2>
+<div style="margin-top:4px; font-size:12px; color:var(--text2)" id="dm-track"></div>
+</div>
+<button class="close" onclick="document.getElementById('detail-modal').classList.add('hidden')">×</button>
+</div>
+<div class="modal-body" id="detail-body"></div>
+</div>
 </div>
 
 <!-- SETTINGS MODAL -->
 <div class="modal-overlay hidden" id="settings-modal">
-  <div class="modal" style="max-width:420px;">
-    <div class="modal-header">
-      <h2>Settings</h2>
-      <button class="close" onclick="document.getElementById('settings-modal').classList.add('hidden')">×</button>
-    </div>
-    <div class="modal-body">
-      <div class="form-group">
-        <label>Gemini API Key</label>
-        <input type="password" id="settings-key" placeholder="AIza...">
-      </div>
-      <p style="font-size:12px; color:var(--text2); margin-top:8px;">Get a free key at <a href="https://aistudio.google.com" target="_blank" style="color:var(--blue);">aistudio.google.com</a> → Get API Key</p>
-      <div style="margin-top:16px; padding:12px; background:var(--surface2); border-radius:6px;">
-        <p style="font-size:12px; color:var(--text2); font-weight:600; margin-bottom:6px;">SLA Thresholds (days per stage)</p>
-        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px;">
-          <div class="form-group"><label>High</label><input type="number" id="sla-high" value="1" min="1"></div>
-          <div class="form-group"><label>Medium</label><input type="number" id="sla-med" value="3" min="1"></div>
-          <div class="form-group"><label>Low</label><input type="number" id="sla-low" value="7" min="1"></div>
-        </div>
-      </div>
-      <div style="margin-top:16px;">
-        <p style="font-size:12px; color:var(--text2); font-weight:600; margin-bottom:6px;">Auto-priority thresholds</p>
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
-          <div class="form-group"><label>High if amount ≥</label><input type="number" id="thr-high" value="100000"></div>
-          <div class="form-group"><label>Medium if amount ≥</label><input type="number" id="thr-med" value="10000"></div>
-        </div>
-        <p style="font-size:11px; color:var(--text3); margin-top:4px;">Below medium threshold = Low priority</p>
-      </div>
-      <div style="margin-top:20px; display:flex; gap:10px; justify-content:space-between;">
-        <button class="btn btn-ghost" style="color:var(--high)" onclick="clearAllData()">Clear all data</button>
-        <button class="btn btn-primary" onclick="saveSettings()">Save Settings</button>
-      </div>
-    </div>
-  </div>
+<div class="modal" style="max-width:420px;">
+<div class="modal-header">
+<h2>Settings</h2>
+<button class="close" onclick="document.getElementById('settings-modal').classList.add('hidden')">×</button>
+</div>
+<div class="modal-body">
+<div style="padding:12px; background:var(--surface2); border-radius:6px;">
+<p style="font-size:12px; color:var(--text2); font-weight:600; margin-bottom:6px;">SLA Thresholds (days per stage)</p>
+<div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px;">
+<div class="form-group"><label>High</label><input type="number" id="sla-high" value="1" min="1"></div>
+<div class="form-group"><label>Medium</label><input type="number" id="sla-med" value="3" min="1"></div>
+<div class="form-group"><label>Low</label><input type="number" id="sla-low" value="7" min="1"></div>
+</div>
+</div>
+<div style="margin-top:16px;">
+<p style="font-size:12px; color:var(--text2); font-weight:600; margin-bottom:6px;">Auto-priority thresholds</p>
+<div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+<div class="form-group"><label>High if amount ≥</label><input type="number" id="thr-high" value="100000"></div>
+<div class="form-group"><label>Medium if amount ≥</label><input type="number" id="thr-med" value="10000"></div>
+</div>
+<p style="font-size:11px; color:var(--text3); margin-top:4px;">Below medium threshold = Low priority</p>
+</div>
+<div style="margin-top:20px; display:flex; gap:10px; justify-content:space-between;">
+<button class="btn btn-ghost" style="color:var(--high)" onclick="clearAllData()">Clear all data</button>
+<button class="btn btn-primary" onclick="saveSettings()">Save Settings</button>
+</div>
+</div>
+</div>
 </div>
 
 <div id="toast"></div>
@@ -487,438 +440,343 @@ const SLA_DAYS = () => ({ high: +(settings.slaHigh||1), medium: +(settings.slaMe
 const THR = () => ({ high: +(settings.thrHigh||100000), med: +(settings.thrMed||10000) });
 
 const STAGES = {
-  1: 'Pending Unit4 Upload',
-  2: 'Pending Unit4 Approval',
-  3: 'Pending Payment',
-  4: 'Fully Processed'
+1: 'Pending Unit4 Upload',
+2: 'Pending Unit4 Approval',
+3: 'Pending Payment',
+4: 'Fully Processed'
 };
 
 // ── INIT ──
 window.onload = () => {
-  document.getElementById('today-date').textContent = new Date().toLocaleDateString('en-IN', {weekday:'short', day:'numeric', month:'short', year:'numeric'});
-  loadApiKey();
-  loadSettings();
-  renderAll();
+document.getElementById('today-date').textContent = new Date().toLocaleDateString('en-IN', {weekday:'short', day:'numeric', month:'short', year:'numeric'});
+loadSettings();
+renderAll();
 };
-
-// ── API KEY ──
-function loadApiKey() {
-  const k = localStorage.getItem('gemini_key');
-  if (k) {
-    document.getElementById('key-banner').classList.add('hidden');
-    setApiStatus(true);
-  }
-}
-function saveApiKey() {
-  const k = document.getElementById('api-key-input').value.trim();
-  if (!k) { toast('Enter a valid API key', 'error'); return; }
-  localStorage.setItem('gemini_key', k);
-  document.getElementById('key-banner').classList.add('hidden');
-  setApiStatus(true);
-  toast('API key saved', 'success');
-}
-function setApiStatus(ok) {
-  const el = document.getElementById('api-status');
-  el.className = ok ? 'ok' : 'err';
-  document.getElementById('api-status-text').textContent = ok ? 'Gemini connected' : 'API not configured';
-}
 
 // ── SETTINGS ──
 function loadSettings() {
-  if (settings.slaHigh) document.getElementById('sla-high').value = settings.slaHigh;
-  if (settings.slaMed) document.getElementById('sla-med').value = settings.slaMed;
-  if (settings.slaLow) document.getElementById('sla-low').value = settings.slaLow;
-  if (settings.thrHigh) document.getElementById('thr-high').value = settings.thrHigh;
-  if (settings.thrMed) document.getElementById('thr-med').value = settings.thrMed;
-  const sk = localStorage.getItem('gemini_key');
-  if (sk) document.getElementById('settings-key').value = sk;
+if (settings.slaHigh) document.getElementById('sla-high').value = settings.slaHigh;
+if (settings.slaMed) document.getElementById('sla-med').value = settings.slaMed;
+if (settings.slaLow) document.getElementById('sla-low').value = settings.slaLow;
+if (settings.thrHigh) document.getElementById('thr-high').value = settings.thrHigh;
+if (settings.thrMed) document.getElementById('thr-med').value = settings.thrMed;
 }
 function saveSettings() {
-  const k = document.getElementById('settings-key').value.trim();
-  if (k) { localStorage.setItem('gemini_key', k); setApiStatus(true); }
-  settings = {
-    slaHigh: document.getElementById('sla-high').value,
-    slaMed: document.getElementById('sla-med').value,
-    slaLow: document.getElementById('sla-low').value,
-    thrHigh: document.getElementById('thr-high').value,
-    thrMed: document.getElementById('thr-med').value,
-  };
-  localStorage.setItem('settings', JSON.stringify(settings));
-  document.getElementById('settings-modal').classList.add('hidden');
-  toast('Settings saved', 'success');
-  renderAll();
+settings = {
+slaHigh: document.getElementById('sla-high').value,
+slaMed: document.getElementById('sla-med').value,
+slaLow: document.getElementById('sla-low').value,
+thrHigh: document.getElementById('thr-high').value,
+thrMed: document.getElementById('thr-med').value,
+};
+localStorage.setItem('settings', JSON.stringify(settings));
+document.getElementById('settings-modal').classList.add('hidden');
+toast('Settings saved', 'success');
+renderAll();
 }
 function openSettings() {
-  loadSettings();
-  document.getElementById('settings-modal').classList.remove('hidden');
+loadSettings();
+document.getElementById('settings-modal').classList.remove('hidden');
 }
 function clearAllData() {
-  if (!confirm('Delete ALL invoice data? This cannot be undone.')) return;
-  invoices = [];
-  save();
-  renderAll();
-  document.getElementById('settings-modal').classList.add('hidden');
-  toast('All data cleared');
+if (!confirm('Delete ALL invoice data? This cannot be undone.')) return;
+invoices = [];
+save();
+renderAll();
+document.getElementById('settings-modal').classList.add('hidden');
+toast('All data cleared');
 }
 
 // ── TRACKING NUMBER ──
 function genTrackingNo() {
-  const now = new Date();
-  const y = now.getFullYear().toString().slice(-2);
-  const m = String(now.getMonth()+1).padStart(2,'0');
-  const d = String(now.getDate()).padStart(2,'0');
-  const seq = String(invoices.length + 1).padStart(4,'0');
-  return `INV-${y}${m}${d}-${seq}`;
+const now = new Date();
+const y = now.getFullYear().toString().slice(-2);
+const m = String(now.getMonth()+1).padStart(2,'0');
+const d = String(now.getDate()).padStart(2,'0');
+const seq = String(invoices.length + 1).padStart(4,'0');
+return `INV-${y}${m}${d}-${seq}`;
 }
 
 // ── UPLOAD ──
+let attachedFile = null;
 function openUpload() { document.getElementById('upload-modal').classList.remove('hidden'); }
 function closeUpload() {
-  document.getElementById('upload-modal').classList.add('hidden');
-  document.getElementById('form-area').classList.add('hidden');
-  document.getElementById('extracting').classList.add('hidden');
-  document.getElementById('file-input').value = '';
-  resetForm();
+document.getElementById('upload-modal').classList.add('hidden');
+document.getElementById('file-input').value = '';
+attachedFile = null;
+resetForm();
 }
 function handleDrop(e) {
-  e.preventDefault();
-  document.getElementById('upload-zone').classList.remove('drag');
-  const f = e.dataTransfer.files[0];
-  if (f && f.type === 'application/pdf') handleFile(f);
-  else toast('Please upload a PDF file', 'error');
+e.preventDefault();
+document.getElementById('upload-zone').classList.remove('drag');
+const f = e.dataTransfer.files[0];
+if (f && f.type === 'application/pdf') handleFile(f);
+else toast('Please attach a PDF file', 'error');
 }
-async function handleFile(file) {
-  if (!file) return;
-  const key = localStorage.getItem('gemini_key');
-  if (!key) { toast('Set Gemini API key in Settings first', 'error'); return; }
-  document.getElementById('extracting').classList.remove('hidden');
-  document.getElementById('extracting').querySelector('span').textContent = 'Reading PDF...';
-  document.getElementById('form-area').classList.add('hidden');
-  try {
-    const b64 = await toBase64(file);
-    document.getElementById('extracting').querySelector('span').textContent = 'Extracting invoice data with AI...';
-    const data = await extractWithGemini(b64, key);
-    populateForm(data);
-    document.getElementById('extracting').classList.add('hidden');
-    document.getElementById('form-area').classList.remove('hidden');
-    toast('Invoice data extracted successfully', 'success');
-  } catch(e) {
-    document.getElementById('extracting').classList.add('hidden');
-    document.getElementById('form-area').classList.remove('hidden');
-    toast('Error: ' + (e.message || 'Check API key in Settings'), 'error');
-    console.error('Extraction error:', e);
-  }
-}
-
-function toBase64(file) {
-  return new Promise((res, rej) => {
-    const r = new FileReader();
-    r.onload = () => res(r.result.split(',')[1]);
-    r.onerror = rej;
-    r.readAsDataURL(file);
-  });
-}
-
-async function extractWithGemini(b64, key) {
-  const prompt = `Extract invoice data and return ONLY a JSON object, no markdown, no explanation:
-{"date":"DD/MM/YYYY","vendor":"supplier name","trn":"vendor tax/GST/VAT number","amount":"total number only","gst":"tax amount number only","currency":"INR or AED or USD","purpose":"goods or services description","other":"invoice number and PO number"}
-Use empty string for missing fields.`;
-
-  const res = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key=${key}`,
-    {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [{
-          parts: [
-            { text: prompt },
-            { inline_data: { mime_type: 'application/pdf', data: b64 } }
-          ]
-        }],
-        generationConfig: { temperature: 0, maxOutputTokens: 512 }
-      })
-    }
-  );
-  if (!res.ok) {
-    let msg = `API error ${res.status}`;
-    try { const e = await res.json(); msg = e.error?.message || msg; } catch(x){}
-    throw new Error(msg);
-  }
-  const json = await res.json();
-  if (json.error) throw new Error(json.error.message);
-  const raw = (json.candidates?.[0]?.content?.parts?.[0]?.text || '').trim();
-  if (!raw) throw new Error('Empty response from Gemini — check API key');
-  const clean = raw.replace(/^```json\s*/i,'').replace(/^```/,'').replace(/```$/,'').trim();
-  try { return JSON.parse(clean); }
-  catch(e) { throw new Error('Parse failed. Response: ' + raw.slice(0,120)); }
-}
-function populateForm(d) {
-  document.getElementById('f-date').value = d.date || '';
-  document.getElementById('f-vendor').value = d.vendor || '';
-  document.getElementById('f-trn').value = d.trn || '';
-  document.getElementById('f-amount').value = d.amount || '';
-  document.getElementById('f-gst').value = d.gst || '';
-  document.getElementById('f-currency').value = d.currency || '';
-  document.getElementById('f-purpose').value = d.purpose || '';
-  document.getElementById('f-other').value = d.other || '';
-  autoSetPriority(d.amount);
+function handleFile(file) {
+if (!file) return;
+attachedFile = file;
+const zone = document.getElementById('upload-zone');
+zone.querySelector('p').innerHTML = `<strong>📎 ${file.name}</strong>`;
+toast('PDF attached — fill in the details below', 'success');
 }
 function resetForm() {
-  ['f-date','f-vendor','f-trn','f-amount','f-gst','f-currency','f-purpose','f-other','f-initiator','f-dept'].forEach(id => {
-    document.getElementById(id).value = '';
-  });
-  selectPriority('');
+['f-date','f-vendor','f-trn','f-amount','f-gst','f-currency','f-purpose','f-other','f-initiator','f-dept'].forEach(id => {
+document.getElementById(id).value = '';
+});
+selectPriority('');
+const zone = document.getElementById('upload-zone');
+zone.querySelector('p').innerHTML = '<strong>Click to attach</strong> or drag & drop PDF invoice';
 }
 
 // ── PRIORITY ──
 let selectedPriority = '';
 function autoSetPriority(val) {
-  const num = parseFloat(String(val).replace(/[^0-9.]/g,'')) || 0;
-  const t = THR();
-  if (num >= t.high) selectPriority('high');
-  else if (num >= t.med) selectPriority('medium');
-  else if (num > 0) selectPriority('low');
+const num = parseFloat(String(val).replace(/[^0-9.]/g,'')) || 0;
+const t = THR();
+if (num >= t.high) selectPriority('high');
+else if (num >= t.med) selectPriority('medium');
+else if (num > 0) selectPriority('low');
 }
 function selectPriority(p) {
-  selectedPriority = p;
-  ['high','medium','low'].forEach(x => document.getElementById('pri-'+x).classList.remove('sel'));
-  if (p) document.getElementById('pri-'+p).classList.add('sel');
+selectedPriority = p;
+['high','medium','low'].forEach(x => document.getElementById('pri-'+x).classList.remove('sel'));
+if (p) document.getElementById('pri-'+p).classList.add('sel');
 }
 
 // ── SUBMIT ──
 function submitInvoice() {
-  const vendor = document.getElementById('f-vendor').value.trim();
-  const initiator = document.getElementById('f-initiator').value.trim();
-  if (!vendor) { toast('Vendor name is required', 'error'); return; }
-  if (!initiator) { toast('Initiator name is required', 'error'); return; }
-  const inv = {
-    id: Date.now(),
-    trackingNo: genTrackingNo(),
-    date: document.getElementById('f-date').value,
-    vendor,
-    trn: document.getElementById('f-trn').value,
-    amount: document.getElementById('f-amount').value,
-    gst: document.getElementById('f-gst').value,
-    currency: document.getElementById('f-currency').value || 'INR',
-    purpose: document.getElementById('f-purpose').value,
-    other: document.getElementById('f-other').value,
-    initiator,
-    dept: document.getElementById('f-dept').value,
-    priority: selectedPriority || 'medium',
-    stage: 1,
-    stageHistory: [{ stage:1, name:initiator, ts: new Date().toISOString() }],
-    approver: '',
-    createdAt: new Date().toISOString(),
-    stageUpdatedAt: new Date().toISOString(),
-  };
-  invoices.unshift(inv);
-  save();
-  renderAll();
-  closeUpload();
-  toast(`Invoice ${inv.trackingNo} submitted`, 'success');
+const vendor = document.getElementById('f-vendor').value.trim();
+const initiator = document.getElementById('f-initiator').value.trim();
+if (!vendor) { toast('Vendor name is required', 'error'); return; }
+if (!initiator) { toast('Initiator name is required', 'error'); return; }
+const inv = {
+id: Date.now(),
+trackingNo: genTrackingNo(),
+date: document.getElementById('f-date').value,
+vendor,
+trn: document.getElementById('f-trn').value,
+amount: document.getElementById('f-amount').value,
+gst: document.getElementById('f-gst').value,
+currency: document.getElementById('f-currency').value || 'INR',
+purpose: document.getElementById('f-purpose').value,
+other: document.getElementById('f-other').value,
+initiator,
+dept: document.getElementById('f-dept').value,
+priority: selectedPriority || 'medium',
+stage: 1,
+stageHistory: [{ stage:1, name:initiator, ts: new Date().toISOString() }],
+approver: '',
+createdAt: new Date().toISOString(),
+stageUpdatedAt: new Date().toISOString(),
+};
+invoices.unshift(inv);
+save();
+renderAll();
+closeUpload();
+toast(`Invoice ${inv.trackingNo} submitted`, 'success');
 }
 
 // ── STAGE ADVANCE ──
 function advanceStage(id) {
-  const inv = invoices.find(x => x.id === id);
-  if (!inv || inv.stage >= 4) return;
-  let name = '';
-  if (inv.stage === 1) name = prompt('Unit4 Uploader name:') || '';
-  else if (inv.stage === 2) name = prompt('Approver name:') || '';
-  else if (inv.stage === 3) name = prompt('Payment processed by:') || '';
-  inv.stage++;
-  inv.stageUpdatedAt = new Date().toISOString();
-  inv.stageHistory.push({ stage: inv.stage, name, ts: new Date().toISOString() });
-  if (inv.stage === 2 && name) inv.approver = name;
-  save();
-  renderAll();
-  toast(`Moved to ${STAGES[inv.stage]}`, 'success');
+const inv = invoices.find(x => x.id === id);
+if (!inv || inv.stage >= 4) return;
+let name = '';
+if (inv.stage === 1) name = prompt('Unit4 Uploader name:') || '';
+else if (inv.stage === 2) name = prompt('Approver name:') || '';
+else if (inv.stage === 3) name = prompt('Payment processed by:') || '';
+inv.stage++;
+inv.stageUpdatedAt = new Date().toISOString();
+inv.stageHistory.push({ stage: inv.stage, name, ts: new Date().toISOString() });
+if (inv.stage === 2 && name) inv.approver = name;
+save();
+renderAll();
+toast(`Moved to ${STAGES[inv.stage]}`, 'success');
 }
 
 // ── SLA ──
 function slaStatus(inv) {
-  const sla = SLA_DAYS();
-  const days = sla[inv.priority] || 3;
-  const updated = new Date(inv.stageUpdatedAt);
-  const now = new Date();
-  const diff = Math.floor((now - updated) / 86400000);
-  const remaining = days - diff;
-  if (inv.stage === 4) return { text: '✓ Done', cls: 'sla-ok' };
-  if (remaining < 0) return { text: `${Math.abs(remaining)}d overdue`, cls: 'sla-over' };
-  if (remaining <= 1) return { text: `${remaining}d left`, cls: 'sla-warn' };
-  return { text: `${remaining}d left`, cls: 'sla-ok' };
+const sla = SLA_DAYS();
+const days = sla[inv.priority] || 3;
+const updated = new Date(inv.stageUpdatedAt);
+const now = new Date();
+const diff = Math.floor((now - updated) / 86400000);
+const remaining = days - diff;
+if (inv.stage === 4) return { text: '✓ Done', cls: 'sla-ok' };
+if (remaining < 0) return { text: `${Math.abs(remaining)}d overdue`, cls: 'sla-over' };
+if (remaining <= 1) return { text: `${remaining}d left`, cls: 'sla-warn' };
+return { text: `${remaining}d left`, cls: 'sla-ok' };
 }
 function isOverdue(inv) {
-  if (inv.stage === 4) return false;
-  const sla = SLA_DAYS();
-  const days = sla[inv.priority] || 3;
-  const diff = Math.floor((new Date() - new Date(inv.stageUpdatedAt)) / 86400000);
-  return diff > days;
+if (inv.stage === 4) return false;
+const sla = SLA_DAYS();
+const days = sla[inv.priority] || 3;
+const diff = Math.floor((new Date() - new Date(inv.stageUpdatedAt)) / 86400000);
+return diff > days;
 }
 
 // ── RENDER ──
 function renderAll() {
-  renderStats();
-  renderTable();
-  renderDailyStatus();
+renderStats();
+renderTable();
+renderDailyStatus();
 }
 function renderStats() {
-  document.getElementById('stat-total').textContent = invoices.length;
-  [1,2,3,4].forEach(s => {
-    document.getElementById('stat-s'+s).textContent = invoices.filter(x=>x.stage===s).length;
-  });
+document.getElementById('stat-total').textContent = invoices.length;
+[1,2,3,4].forEach(s => {
+document.getElementById('stat-s'+s).textContent = invoices.filter(x=>x.stage===s).length;
+});
 }
 function renderDailyStatus() {
-  const tbody = document.getElementById('status-tbody');
-  tbody.innerHTML = '';
-  [1,2,3,4].forEach(s => {
-    const group = invoices.filter(x => x.stage === s);
-    const overdue = group.filter(x => isOverdue(x)).length;
-    const row = document.createElement('tr');
-    row.innerHTML = `
-      <td><span class="stage-badge stage-${s}">${STAGES[s]}</span></td>
-      <td><strong>${group.length}</strong></td>
-      <td>${group.filter(x=>x.priority==='high').length}</td>
-      <td>${group.filter(x=>x.priority==='medium').length}</td>
-      <td>${group.filter(x=>x.priority==='low').length}</td>
-      <td>${overdue > 0 ? `<span class="sla-over">${overdue} overdue</span>` : '<span class="sla-ok">None</span>'}</td>
-    `;
-    tbody.appendChild(row);
-  });
+const tbody = document.getElementById('status-tbody');
+tbody.innerHTML = '';
+[1,2,3,4].forEach(s => {
+const group = invoices.filter(x => x.stage === s);
+const overdue = group.filter(x => isOverdue(x)).length;
+const row = document.createElement('tr');
+row.innerHTML = `
+<td><span class="stage-badge stage-${s}">${STAGES[s]}</span></td>
+<td><strong>${group.length}</strong></td>
+<td>${group.filter(x=>x.priority==='high').length}</td>
+<td>${group.filter(x=>x.priority==='medium').length}</td>
+<td>${group.filter(x=>x.priority==='low').length}</td>
+<td>${overdue > 0 ? `<span class="sla-over">${overdue} overdue</span>` : '<span class="sla-ok">None</span>'}</td>
+`;
+tbody.appendChild(row);
+});
 }
 function setFilter(f, el) {
-  activeFilter = f;
-  document.querySelectorAll('[data-filter]').forEach(b => b.classList.remove('active'));
-  el.classList.add('active');
-  renderTable();
+activeFilter = f;
+document.querySelectorAll('[data-filter]').forEach(b => b.classList.remove('active'));
+el.classList.add('active');
+renderTable();
 }
 function setPriFilter(p, el) {
-  if (activePriFilter === p) { activePriFilter = ''; el.classList.remove('active'); }
-  else {
-    activePriFilter = p;
-    document.querySelectorAll('[data-filter-pri]').forEach(b => b.classList.remove('active'));
-    el.classList.add('active');
-  }
-  renderTable();
+if (activePriFilter === p) { activePriFilter = ''; el.classList.remove('active'); }
+else {
+activePriFilter = p;
+document.querySelectorAll('[data-filter-pri]').forEach(b => b.classList.remove('active'));
+el.classList.add('active');
+}
+renderTable();
 }
 function renderTable() {
-  const search = document.getElementById('search-box').value.toLowerCase();
-  let list = invoices.filter(inv => {
-    const matchStage = activeFilter === 'all' || inv.stage === +activeFilter;
-    const matchPri = !activePriFilter || inv.priority === activePriFilter;
-    const matchSearch = !search || inv.vendor.toLowerCase().includes(search) || inv.trackingNo.toLowerCase().includes(search) || (inv.initiator||'').toLowerCase().includes(search);
-    return matchStage && matchPri && matchSearch;
-  });
-  // sort: high priority first, then by SLA urgency
-  list.sort((a,b) => {
-    const po = {high:0,medium:1,low:2};
-    if (po[a.priority] !== po[b.priority]) return po[a.priority] - po[b.priority];
-    return new Date(a.stageUpdatedAt) - new Date(b.stageUpdatedAt);
-  });
-  const tbody = document.getElementById('invoice-tbody');
-  if (!list.length) {
-    tbody.innerHTML = '<tr><td colspan="11"><div class="empty-state"><div class="icon">📂</div><p>No invoices match your filter.</p></div></td></tr>';
-    return;
-  }
-  tbody.innerHTML = list.map(inv => {
-    const sla = slaStatus(inv);
-    const priMap = { high: 'badge-high', medium: 'badge-medium', low: 'badge-low' };
-    const priLabel = { high: '🔴 High', medium: '🟡 Medium', low: '🟢 Low' };
-    const canAdvance = inv.stage < 4;
-    return `<tr>
-      <td><span class="track-no">${inv.trackingNo}</span></td>
-      <td><span class="vendor-name">${inv.vendor}</span></td>
-      <td style="color:var(--text2)">${inv.date||'—'}</td>
-      <td class="amount-cell">${inv.currency} ${Number(inv.amount||0).toLocaleString('en-IN')}</td>
-      <td style="color:var(--text2)">${inv.gst ? inv.currency+' '+Number(inv.gst).toLocaleString('en-IN') : '—'}</td>
-      <td style="color:var(--text2); max-width:160px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="${inv.purpose||''}">${inv.purpose||'—'}</td>
-      <td><span class="badge ${priMap[inv.priority]}">${priLabel[inv.priority]}</span></td>
-      <td><span class="stage-badge stage-${inv.stage}">${STAGES[inv.stage]}</span></td>
-      <td><span class="${sla.cls}">${sla.text}</span></td>
-      <td style="color:var(--text2)">${inv.initiator||'—'}</td>
-      <td><div class="action-cell">
-        <button class="btn btn-ghost btn-sm" onclick="openDetail(${inv.id})">View</button>
-        ${canAdvance ? `<button class="btn btn-primary btn-sm" onclick="advanceStage(${inv.id})">Next →</button>` : ''}
-      </div></td>
-    </tr>`;
-  }).join('');
+const search = document.getElementById('search-box').value.toLowerCase();
+let list = invoices.filter(inv => {
+const matchStage = activeFilter === 'all' || inv.stage === +activeFilter;
+const matchPri = !activePriFilter || inv.priority === activePriFilter;
+const matchSearch = !search || inv.vendor.toLowerCase().includes(search) || inv.trackingNo.toLowerCase().includes(search) || (inv.initiator||'').toLowerCase().includes(search);
+return matchStage && matchPri && matchSearch;
+});
+// sort: high priority first, then by SLA urgency
+list.sort((a,b) => {
+const po = {high:0,medium:1,low:2};
+if (po[a.priority] !== po[b.priority]) return po[a.priority] - po[b.priority];
+return new Date(a.stageUpdatedAt) - new Date(b.stageUpdatedAt);
+});
+const tbody = document.getElementById('invoice-tbody');
+if (!list.length) {
+tbody.innerHTML = '<tr><td colspan="11"><div class="empty-state"><div class="icon">📂</div><p>No invoices match your filter.</p></div></td></tr>';
+return;
+}
+tbody.innerHTML = list.map(inv => {
+const sla = slaStatus(inv);
+const priMap = { high: 'badge-high', medium: 'badge-medium', low: 'badge-low' };
+const priLabel = { high: '🔴 High', medium: '🟡 Medium', low: '🟢 Low' };
+const canAdvance = inv.stage < 4;
+return `<tr>
+<td><span class="track-no">${inv.trackingNo}</span></td>
+<td><span class="vendor-name">${inv.vendor}</span></td>
+<td style="color:var(--text2)">${inv.date||'—'}</td>
+<td class="amount-cell">${inv.currency} ${Number(inv.amount||0).toLocaleString('en-IN')}</td>
+<td style="color:var(--text2)">${inv.gst ? inv.currency+' '+Number(inv.gst).toLocaleString('en-IN') : '—'}</td>
+<td style="color:var(--text2); max-width:160px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="${inv.purpose||''}">${inv.purpose||'—'}</td>
+<td><span class="badge ${priMap[inv.priority]}">${priLabel[inv.priority]}</span></td>
+<td><span class="stage-badge stage-${inv.stage}">${STAGES[inv.stage]}</span></td>
+<td><span class="${sla.cls}">${sla.text}</span></td>
+<td style="color:var(--text2)">${inv.initiator||'—'}</td>
+<td><div class="action-cell">
+<button class="btn btn-ghost btn-sm" onclick="openDetail(${inv.id})">View</button>
+${canAdvance ? `<button class="btn btn-primary btn-sm" onclick="advanceStage(${inv.id})">Next →</button>` : ''}
+</div></td>
+</tr>`;
+}).join('');
 }
 
 // ── DETAIL MODAL ──
 function openDetail(id) {
-  const inv = invoices.find(x => x.id === id);
-  if (!inv) return;
-  document.getElementById('dm-title').textContent = inv.vendor;
-  document.getElementById('dm-track').textContent = inv.trackingNo;
-  const sla = slaStatus(inv);
-  const stepsHTML = [1,2,3,4].map(s => {
-    const cls = inv.stage > s ? 'done' : inv.stage === s ? 'active' : '';
-    const hist = inv.stageHistory?.find(h => h.stage === s);
-    const sub = hist?.name ? `<br><span style="font-size:9px;color:var(--text3)">${hist.name}</span>` : '';
-    return `<div class="stage-step ${cls}"><div class="stage-dot">${inv.stage > s ? '✓' : s}</div><div class="stage-label">${STAGES[s]}${sub}</div></div>`;
-  }).join('');
-  const priMap = { high:'badge-high', medium:'badge-medium', low:'badge-low' };
-  const priLabel = { high:'🔴 High', medium:'🟡 Medium', low:'🟢 Low' };
-  document.getElementById('detail-body').innerHTML = `
-    <div class="detail-section">
-      <h3>Stage Progress</h3>
-      <div class="stage-timeline">${stepsHTML}</div>
-      <div style="display:flex; gap:10px; margin-top:10px; align-items:center;">
-        <span class="badge ${priMap[inv.priority]}">${priLabel[inv.priority]}</span>
-        <span class="${sla.cls}" style="font-size:12px;">${sla.text}</span>
-        ${inv.stage < 4 ? `<button class="btn btn-primary btn-sm" style="margin-left:auto" onclick="advanceStage(${inv.id}); document.getElementById('detail-modal').classList.add('hidden')">Advance to Next Stage</button>` : ''}
-      </div>
-    </div>
-    <div class="detail-section">
-      <h3>Invoice Details</h3>
-      <div class="detail-grid">
-        <div class="detail-item"><label>Tracking No</label><div class="val mono">${inv.trackingNo}</div></div>
-        <div class="detail-item"><label>Invoice Date</label><div class="val">${inv.date||'—'}</div></div>
-        <div class="detail-item"><label>Vendor Name</label><div class="val">${inv.vendor}</div></div>
-        <div class="detail-item"><label>Vendor TRN</label><div class="val mono">${inv.trn||'—'}</div></div>
-        <div class="detail-item"><label>Amount</label><div class="val mono">${inv.currency} ${Number(inv.amount||0).toLocaleString('en-IN')}</div></div>
-        <div class="detail-item"><label>GST / VAT</label><div class="val mono">${inv.gst ? inv.currency+' '+Number(inv.gst).toLocaleString('en-IN') : '—'}</div></div>
-        <div class="detail-item"><label>Purpose</label><div class="val">${inv.purpose||'—'}</div></div>
-        <div class="detail-item"><label>Other</label><div class="val">${inv.other||'—'}</div></div>
-      </div>
-    </div>
-    <div class="detail-section">
-      <h3>Workflow</h3>
-      <div class="detail-grid">
-        <div class="detail-item"><label>Initiator</label><div class="val">${inv.initiator||'—'}</div></div>
-        <div class="detail-item"><label>Department</label><div class="val">${inv.dept||'—'}</div></div>
-        <div class="detail-item"><label>Approver</label><div class="val">${inv.approver||'—'}</div></div>
-        <div class="detail-item"><label>Submitted</label><div class="val">${new Date(inv.createdAt).toLocaleDateString('en-IN')}</div></div>
-      </div>
-    </div>
-    ${inv.stageHistory?.length ? `<div class="detail-section">
-      <h3>Activity Log</h3>
-      ${inv.stageHistory.map(h => `<div style="display:flex;gap:10px;padding:6px 0;border-top:1px solid var(--border);font-size:12px;">
-        <span class="stage-badge stage-${h.stage}" style="flex-shrink:0;">${STAGES[h.stage]}</span>
-        <span style="color:var(--text2)">${h.name||'System'}</span>
-        <span style="color:var(--text3);margin-left:auto;">${new Date(h.ts).toLocaleString('en-IN')}</span>
-      </div>`).join('')}
-    </div>` : ''}
-  `;
-  document.getElementById('detail-modal').classList.remove('hidden');
+const inv = invoices.find(x => x.id === id);
+if (!inv) return;
+document.getElementById('dm-title').textContent = inv.vendor;
+document.getElementById('dm-track').textContent = inv.trackingNo;
+const sla = slaStatus(inv);
+const stepsHTML = [1,2,3,4].map(s => {
+const cls = inv.stage > s ? 'done' : inv.stage === s ? 'active' : '';
+const hist = inv.stageHistory?.find(h => h.stage === s);
+const sub = hist?.name ? `<br><span style="font-size:9px;color:var(--text3)">${hist.name}</span>` : '';
+return `<div class="stage-step ${cls}"><div class="stage-dot">${inv.stage > s ? '✓' : s}</div><div class="stage-label">${STAGES[s]}${sub}</div></div>`;
+}).join('');
+const priMap = { high:'badge-high', medium:'badge-medium', low:'badge-low' };
+const priLabel = { high:'🔴 High', medium:'🟡 Medium', low:'🟢 Low' };
+document.getElementById('detail-body').innerHTML = `
+<div class="detail-section">
+<h3>Stage Progress</h3>
+<div class="stage-timeline">${stepsHTML}</div>
+<div style="display:flex; gap:10px; margin-top:10px; align-items:center;">
+<span class="badge ${priMap[inv.priority]}">${priLabel[inv.priority]}</span>
+<span class="${sla.cls}" style="font-size:12px;">${sla.text}</span>
+${inv.stage < 4 ? `<button class="btn btn-primary btn-sm" style="margin-left:auto" onclick="advanceStage(${inv.id}); document.getElementById('detail-modal').classList.add('hidden')">Advance to Next Stage</button>` : ''}
+</div>
+</div>
+<div class="detail-section">
+<h3>Invoice Details</h3>
+<div class="detail-grid">
+<div class="detail-item"><label>Tracking No</label><div class="val mono">${inv.trackingNo}</div></div>
+<div class="detail-item"><label>Invoice Date</label><div class="val">${inv.date||'—'}</div></div>
+<div class="detail-item"><label>Vendor Name</label><div class="val">${inv.vendor}</div></div>
+<div class="detail-item"><label>Vendor TRN</label><div class="val mono">${inv.trn||'—'}</div></div>
+<div class="detail-item"><label>Amount</label><div class="val mono">${inv.currency} ${Number(inv.amount||0).toLocaleString('en-IN')}</div></div>
+<div class="detail-item"><label>GST / VAT</label><div class="val mono">${inv.gst ? inv.currency+' '+Number(inv.gst).toLocaleString('en-IN') : '—'}</div></div>
+<div class="detail-item"><label>Purpose</label><div class="val">${inv.purpose||'—'}</div></div>
+<div class="detail-item"><label>Other</label><div class="val">${inv.other||'—'}</div></div>
+</div>
+</div>
+<div class="detail-section">
+<h3>Workflow</h3>
+<div class="detail-grid">
+<div class="detail-item"><label>Initiator</label><div class="val">${inv.initiator||'—'}</div></div>
+<div class="detail-item"><label>Department</label><div class="val">${inv.dept||'—'}</div></div>
+<div class="detail-item"><label>Approver</label><div class="val">${inv.approver||'—'}</div></div>
+<div class="detail-item"><label>Submitted</label><div class="val">${new Date(inv.createdAt).toLocaleDateString('en-IN')}</div></div>
+</div>
+</div>
+${inv.stageHistory?.length ? `<div class="detail-section">
+<h3>Activity Log</h3>
+${inv.stageHistory.map(h => `<div style="display:flex;gap:10px;padding:6px 0;border-top:1px solid var(--border);font-size:12px;">
+<span class="stage-badge stage-${h.stage}" style="flex-shrink:0;">${STAGES[h.stage]}</span>
+<span style="color:var(--text2)">${h.name||'System'}</span>
+<span style="color:var(--text3);margin-left:auto;">${new Date(h.ts).toLocaleString('en-IN')}</span>
+</div>`).join('')}
+</div>` : ''}
+`;
+document.getElementById('detail-modal').classList.remove('hidden');
 }
 
 // ── EXPORT CSV ──
 function exportCSV() {
-  if (!invoices.length) { toast('No data to export', 'error'); return; }
-  const cols = ['Tracking No','Vendor','Date','TRN','Currency','Amount','GST','Purpose','Other','Priority','Stage','Initiator','Dept','Approver','Created'];
-  const rows = invoices.map(inv => [
-    inv.trackingNo, inv.vendor, inv.date, inv.trn, inv.currency, inv.amount, inv.gst,
-    inv.purpose, inv.other, inv.priority, STAGES[inv.stage], inv.initiator, inv.dept, inv.approver,
-    new Date(inv.createdAt).toLocaleDateString('en-IN')
-  ].map(v => `"${(v||'').toString().replace(/"/g,'""')}"`));
-  const csv = [cols.join(','), ...rows.map(r => r.join(','))].join('\n');
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(new Blob([csv], {type:'text/csv'}));
-  a.download = `invoices_${new Date().toISOString().slice(0,10)}.csv`;
-  a.click();
-  toast('CSV exported', 'success');
+if (!invoices.length) { toast('No data to export', 'error'); return; }
+const cols = ['Tracking No','Vendor','Date','TRN','Currency','Amount','GST','Purpose','Other','Priority','Stage','Initiator','Dept','Approver','Created'];
+const rows = invoices.map(inv => [
+inv.trackingNo, inv.vendor, inv.date, inv.trn, inv.currency, inv.amount, inv.gst,
+inv.purpose, inv.other, inv.priority, STAGES[inv.stage], inv.initiator, inv.dept, inv.approver,
+new Date(inv.createdAt).toLocaleDateString('en-IN')
+].map(v => `"${(v||'').toString().replace(/"/g,'""')}"`));
+const csv = [cols.join(','), ...rows.map(r => r.join(','))].join('\n');
+const a = document.createElement('a');
+a.href = URL.createObjectURL(new Blob([csv], {type:'text/csv'}));
+a.download = `invoices_${new Date().toISOString().slice(0,10)}.csv`;
+a.click();
+toast('CSV exported', 'success');
 }
 
 // ── SAVE ──
@@ -926,10 +784,10 @@ function save() { localStorage.setItem('invoices', JSON.stringify(invoices)); }
 
 // ── TOAST ──
 function toast(msg, type='') {
-  const el = document.getElementById('toast');
-  el.textContent = msg;
-  el.className = 'show' + (type ? ' '+type : '');
-  setTimeout(() => el.className = '', 2800);
+const el = document.getElementById('toast');
+el.textContent = msg;
+el.className = 'show' + (type ? ' '+type : '');
+setTimeout(() => el.className = '', 2800);
 }
 </script>
 </body>
