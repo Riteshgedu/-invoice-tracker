@@ -318,7 +318,7 @@ main { padding: 16px; }
 <div class="upload-zone" id="upload-zone" onclick="document.getElementById('file-input').click()" ondrop="handleDrop(event)" ondragover="event.preventDefault(); this.classList.add('drag')" ondragleave="this.classList.remove('drag')">
 <div class="upload-icon">📄</div>
 <p><strong>Click to attach</strong> or drag & drop PDF invoice</p>
-<p style="margin-top:4px; font-size:12px;">Attached for reference only — fill in the details below manually</p>
+<p style="margin-top:4px; font-size:12px;">We'll try to auto-fill the fields below from the PDF text (no API/key needed) — please verify before submitting</p>
 </div>
 <input type="file" id="file-input" accept="application/pdf" onchange="handleFile(this.files[0])">
 
@@ -430,7 +430,11 @@ main { padding: 16px; }
 
 <div id="toast"></div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script>
+if (window.pdfjsLib) {
+pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+}
 // ── STATE ──
 let invoices = JSON.parse(localStorage.getItem('invoices') || '[]');
 let activeFilter = 'all';
@@ -513,12 +517,111 @@ const f = e.dataTransfer.files[0];
 if (f && f.type === 'application/pdf') handleFile(f);
 else toast('Please attach a PDF file', 'error');
 }
-function handleFile(file) {
+async function handleFile(file) {
 if (!file) return;
 attachedFile = file;
 const zone = document.getElementById('upload-zone');
 zone.querySelector('p').innerHTML = `<strong>📎 ${file.name}</strong>`;
+if (!window.pdfjsLib) {
 toast('PDF attached — fill in the details below', 'success');
+return;
+}
+zone.querySelector('p').innerHTML = `<strong>📎 ${file.name}</strong> — reading PDF...`;
+try {
+const text = await extractPdfText(file);
+const data = parseInvoiceText(text);
+populateForm(data);
+zone.querySelector('p').innerHTML = `<strong>📎 ${file.name}</strong>`;
+toast('Auto-filled from PDF — please verify the fields', 'success');
+} catch (e) {
+zone.querySelector('p').innerHTML = `<strong>📎 ${file.name}</strong>`;
+toast('Could not read PDF text — fill in manually', 'error');
+console.error('PDF read error:', e);
+}
+}
+
+// ── CLIENT-SIDE PDF TEXT EXTRACTION (pdf.js, no API/server) ──
+async function extractPdfText(file) {
+const buf = await file.arrayBuffer();
+const pdf = await pdfjsLib.getDocument({ data: buf }).promise;
+let lines = [];
+for (let p = 1; p <= pdf.numPages; p++) {
+const page = await pdf.getPage(p);
+const content = await page.getTextContent();
+// group text items into lines using their y-position
+let rows = {};
+content.items.forEach(item => {
+const y = Math.round(item.transform[5]);
+if (!rows[y]) rows[y] = [];
+rows[y].push(item.str);
+});
+const ys = Object.keys(rows).map(Number).sort((a,b) => b - a);
+ys.forEach(y => lines.push(rows[y].join(' ').trim()));
+}
+return lines.filter(l => l.length).join('\n');
+}
+
+// ── HEURISTIC INVOICE FIELD PARSER (regex-based, best-effort, no API) ──
+function parseInvoiceText(text) {
+const out = { date:'', vendor:'', trn:'', amount:'', gst:'', currency:'', purpose:'', other:'' };
+const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
+
+// currency
+if (/₹|INR|Rs\.?/i.test(text)) out.currency = 'INR';
+else if (/AED|د\.إ/i.test(text)) out.currency = 'AED';
+else if (/\$|USD/i.test(text)) out.currency = 'USD';
+
+// date: DD/MM/YYYY, DD-MM-YYYY, or "12 Jan 2026" style
+let m = text.match(/\b(\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4})\b/);
+if (!m) m = text.match(/\b(\d{1,2}\s+(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Sept|Oct|Nov|Dec)[a-z]*\s+\d{2,4})\b/i);
+if (m) out.date = m[1];
+
+// TRN / GSTIN
+m = text.match(/\b(?:TRN|GSTIN|GST\s*No\.?|Tax\s*Reg(?:istration)?\s*No\.?)\s*[:\-]?\s*([A-Z0-9]{10,15})\b/i);
+if (m) out.trn = m[1];
+
+// total amount — prefer lines with "Grand Total" / "Total Amount" / "Total Due" / "Amount Payable"
+const totalLine = lines.find(l => /grand\s*total|total\s*amount|total\s*due|amount\s*payable|net\s*payable/i.test(l))
+|| lines.find(l => /\btotal\b/i.test(l) && !/subtotal/i.test(l));
+if (totalLine) {
+const nums = totalLine.match(/[\d,]+\.\d{2}|[\d,]{3,}/g);
+if (nums) out.amount = nums[nums.length - 1].replace(/,/g, '');
+}
+
+// GST/VAT amount — must mention gst/vat/tax, have a number on the same line, and not be a label like "Tax Invoice"/TRN
+const gstLine = lines.find(l => /\b(gst|vat|tax)\b/i.test(l) && /\d/.test(l) && !/trn|gstin|reg(istration)?\s*no|^\s*tax\s*invoice\s*$/i.test(l));
+if (gstLine) {
+const nums = gstLine.match(/[\d,]+\.\d{2}|[\d,]{2,}/g);
+if (nums) out.gst = nums[nums.length - 1].replace(/,/g, '');
+}
+
+// vendor — first substantial line near the top that isn't "Invoice"/"Tax Invoice"/a date/a number-only line
+for (let i = 0; i < Math.min(lines.length, 8); i++) {
+const l = lines[i];
+if (l.length > 2 && l.length < 60 && !/^(tax\s*)?invoice\b/i.test(l) && !/^\d/.test(l) && !/^(date|invoice\s*no|bill\s*to|ship\s*to)/i.test(l)) {
+out.vendor = l;
+break;
+}
+}
+
+// purpose — look for a line item / description hint, else blank (left for manual entry)
+const descLine = lines.find(l => /description|particulars|goods\s+supplied|scope\s+of\s+work/i.test(l) && !/bill\s*to|ship\s*to/i.test(l));
+if (descLine) out.purpose = descLine.slice(0, 120);
+
+out.other = 'Extracted locally from PDF — please double-check all fields';
+return out;
+}
+
+function populateForm(d) {
+document.getElementById('f-date').value = d.date || '';
+document.getElementById('f-vendor').value = d.vendor || '';
+document.getElementById('f-trn').value = d.trn || '';
+document.getElementById('f-amount').value = d.amount || '';
+document.getElementById('f-gst').value = d.gst || '';
+document.getElementById('f-currency').value = d.currency || '';
+document.getElementById('f-purpose').value = d.purpose || '';
+document.getElementById('f-other').value = d.other || '';
+autoSetPriority(d.amount);
 }
 function resetForm() {
 ['f-date','f-vendor','f-trn','f-amount','f-gst','f-currency','f-purpose','f-other','f-initiator','f-dept'].forEach(id => {
